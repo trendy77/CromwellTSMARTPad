@@ -1,0 +1,13 @@
+// Path to Arduino, you can use a custom version of Arduino by modifying this setting to include the full path. Example: 'C:\Program Files\Arduino' for Windows, '/Applications' for Mac, '/home/$user/Downloads/arduino-1.8.1' for Linux. (Requires a restart after change)
+"arduino.path": "C:\\arduino",
+// 
+"arduino.logLevel": "info",
+// 
+"arduino.enableUSBDetection": true,
+
+// Specify where the Arduino IDE is (Absolute path only).
+"arduino.idePath": "C:\\arduino",
+
+// Specifies the path to your library directory. Default is used path to /Documents/Arduino/libraries (Absolute path only).
+"arduino.libraryPath": "C:\\arduino\\libraries",
+}

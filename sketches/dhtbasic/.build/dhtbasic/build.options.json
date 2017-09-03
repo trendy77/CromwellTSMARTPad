@@ -1,0 +1,10 @@
+{
+  "builtInLibrariesFolders": "C:\\arduino\\libraries",
+  "customBuildProperties": "build.warn_data_percentage=75,runtime.tools.avr-gcc.path=C:\\arduino\\hardware\\tools\\avr,runtime.tools.avrdude.path=C:\\arduino\\hardware\\tools\\avr,runtime.tools.arduinoOTA.path=C:\\arduino\\hardware\\tools\\avr",
+  "fqbn": "arduino:avr:uno",
+  "hardwareFolders": "C:\\arduino\\hardware",
+  "otherLibrariesFolders": "C:\\Users\\trend\\My Documents\\Arduino\\libraries",
+  "runtime.ide.version": "10600",
+  "sketchLocation": "c:\\Users\\trend\\Documents\\GitHub\\TSMARTPad\\dhtbasic\\dhtbasic.ino",
+  "toolsFolders": "C:\\arduino\\tools-builder,C:\\arduino\\hardware\\tools\\avr"
+}
