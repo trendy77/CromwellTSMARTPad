@@ -1,0 +1,105 @@
+to do lights
+cover:
+  - platform: mqtt
+    state_topic: "home-assistant/cover"
+    command_topic: "home-assistant/cover/set"
+    name: "MQTT Cover"
+    qos: 0
+    retain: true
+    payload_open: "OPEN"
+    payload_close: "CLOSE"
+    payload_stop: "STOP"
+    state_open: "OPEN"
+    state_closed: "STATE"
+    optimistic: false
+    value_template: '{{ value.x }}'
+    tilt_command_topic: 'home-assistant/cover/tilt'
+    tilt_status_topic: 'home-assistant/cover/tilt-status'
+    tilt_min: 0
+    tilt_max: 180
+    tilt_closed_value: 70
+    tilt_opened_value: 180
+
+
+	
+	
+	
+	mqtt:
+  birth_message:
+    topic: 'hass/status'
+    payload: 'online'
+  will_message:
+    topic: 'hass/status'
+    payload: 'offline'
+	
+	
+	
+	
+	
+
+# Example configuration.yaml entry
+cover:
+  - platform: command_line
+    covers:
+      garage_door:
+        command_open: move_command up garage
+        command_close: move_command down garage
+        command_stop: move_command stop garage
+        command_state: state_command garage
+        value_template: >
+          {% if value == 'open' %}
+          100
+          {% elif value == 'closed' %}
+          0
+          {% endif %}
+          
+
+device_tracker:
+  platform: mqtt_json
+  devices:
+    tm9iv: location/tm9iv
+    tpenGalaxy: location/tpengalaxy
+
+	
+// AUTOMATION EXAMPLES	
+	// FB MESSENGER
+	
+automation:
+  alias: Evening Greeting
+  trigger:
+    platform: sun
+    event: sunset
+  action:
+    service: notify.facebook
+    data:
+      message: 'Good Evening'
+      target:
+        - +919413017584
+	
+  trigger:
+    platform: time
+    at: "07:15:00"
+  action:
+    - service: cover.set_cover_position
+      data:
+        entity_id: cover.demo
+        position: 50
+
+
+		  
+		  
+script:
+  test_fb_notification:
+    sequence:
+      - service: notify.facebook
+        data:
+          message: Some text before the quick replies
+          target: 0034643123212
+          data:
+            quick_replies:
+              - content_type: text
+                title: Red
+                payload: DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_RED
+              - content_type: text
+                title: Blue
+                payload: DEVELOPER_DEFINED_PAYLOAD_FOR_PICKING_BLUE

@@ -2,28 +2,48 @@
 #include <dht.h>
 #include <PubSubClient.h>
 #define SLEEP_DELAY_IN_SECONDS  30
+#include <IRrecv.h>
+#include <IRremoteESP8266.h>
+#include <IRsend.h>
+#include <IRtimer.h>
+#include <IRutils.h>
+#include <ir_Argo.h>
+#include <ir_Daikin.h>
+#include <ir_Fujitsu.h>
+#include <ir_Kelvinator.h>
+#include <ir_LG.h>
+#include <ir_Mitsubishi.h>
+#include <ir_Trotec.h>
 
-long lastMsg = 0;
+// TIME, INTERNAL VARS
+long lastChk, lastPrint, timeGone = 0;
 char msg[50];
+int checks = 0;
 
-int value = 0;
+// TEMP AND HUMIDITY VARS
+int value, temp, humid = 0;
 dht DHT;
 #define DHT11_PIN 2
-
-const char* ssid = "WiFi2";
-const char* password = "4328646518";
-const char* mqtt_server = "m12.cloudmqtt.com";
-const char* mqtt_username = "yklkyogj";
-const char* mqtt_password = "fe0xxxhDMx2t";
-const char* mqtt_topic = "sensors/lounge_temp";
-const char* mqtt_topic2 = "sensors/lounge_humid";
-WiFiClient espClient;
-PubSubClient client(espClient);
-
 char temperatureString[6];
 char humidString[6];
 
+// CONNECTIVITY
+const char* ssid = "WiFi2";
+const char* password = "4328646518";
+WiFiClient espClient;
+PubSubClient client(espClient);
 
+// IR RECEIVER
+uint16_t RECV_PIN = 14;   // IR detector @ GPIO pin 14 (D5)
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+
+// MQTT
+const char* mqtt_server = "m12.cloudmqtt.com";
+const char* mqtt_username = "node189";
+const char* mqtt_password = "Joker999";
+const char* mqtt_topic = "sensors/lounge_temp";
+const char* mqtt_topic2 = "sensors/lounge_humid";
 
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
@@ -39,9 +59,9 @@ void setup() {
   Serial.begin(115200);
   setup_wifi();
   client.setServer(mqtt_server, 34303);
+  //client.setServer(mqtt_server2, 1883);
   client.setCallback(callback);
-  getTemperature();
-  serialTemp();
+  irrecv.enableIRIn();  // Start the receiver
 }
 
 void setup_wifi() {
@@ -72,47 +92,59 @@ void reconnect() {
         }
   }
 }
-int temp, humid = 0;
+
+void getTemperature() {
+  int chk = DHT.read11(DHT11_PIN);
+  temp = DHT.temperature;
+  humid = DHT.humidity;
+}
 
 void serialTemp() {
-  int chk = DHT.read11(DHT11_PIN);
   Serial.print("Temperature = ");
   Serial.println(DHT.temperature);
   Serial.print("Humidity = ");
   Serial.println(DHT.humidity);
-  temp = DHT.temperature;
-  humid = DHT.humidity;
-}
- 
-
-void getTemperature() {
-
-  Serial.print("Temperature = ");
+  Serial.println(" ");
+  Serial.print("int Temperature = ");
   Serial.println(temp);
-  Serial.print("Humidity = ");
+  Serial.print("int Humidity = ");
   Serial.println(humid);
   Serial.println(" ");
 }
- 
 
 void loop() {
-  if (!client.connected()) {
+  timeGone = millis();
+ if (irrecv.decode(&results)) {
+    // print() & println() can't handle printing long longs. (uint64_t)
+    serialPrintUint64(results.value, HEX);
+    Serial.println("");
+    irrecv.resume();  // Receive the next value
+  }
+  delay(100);
+    if ((timeGone - lastChk) > 30){
+    getTemperature();
+    mqttTemp();
+    lastChk = millis();
+    checks++;
+      if (checks > 2){
+      serialTemp();
+      checks =0;
+      }
+    }
+if (!client.connected()) {
     reconnect();
   }
-  client.loop();
- getTemperature();
-  // convert temperature to a string with two digits before the comma and 2 digits for precision
-  dtostrf(temp, 2, 2, temperatureString);
-  dtostrf(humid, 2, 2, humidString);
-      client.publish("lounge_temp", temperatureString);
-    client.publish("lounge_humidity", humidString);
-  Serial.print('sending to MQTT');
-  client.disconnect();
-  Serial.print('disconnected');
-  WiFi.disconnect();
-  delay(100);
-  //Serial << "Entering deep sleep mode for " << SLEEP_DELAY_IN_SECONDS << " seconds..." << endl;
-  //ESP.deepSleep(SLEEP_DELAY_IN_SECONDS * 1000000, WAKE_RF_DEFAULT);
-  //ESP.deepSleep(10 * 1000, WAKE_NO_RFCAL);
-  //delay(500);   // wait for deep sleep to happen
+ client.loop();
+}
+
+void mqttTemp(){
+ dtostrf(temp, 2, 2, temperatureString);
+ dtostrf(humid, 2, 2, humidString);
+ client.publish("sensors/lounge_temp", temperatureString);
+ client.publish("sensors/lounge_humidity", humidString);
+ Serial.print('sent to MQTT');
+ client.disconnect();
+ Serial.print('disconnected');
+ WiFi.disconnect();
+ delay(100);
 }
