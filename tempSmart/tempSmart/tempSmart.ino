@@ -1,13 +1,11 @@
-#include <ESP8266WiFi.h>
+q1#include <ESP8266WiFi.h>
 #include "DHT.h"
-
-define DHTTYPE DHT11   // DHT 11
 
 const char* ssid = "WiFi2";
 const char* password = "4328646518";
 
 WiFiServer server(8089);
-
+#define DHTTYPE DHT11
     // DHT Sensor
 const int DHTPin = 14;
     // Initialize DHT sensor.
@@ -24,8 +22,7 @@ void setup() {
   dht.begin();
     // Connecting to WiFi network
   Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
+  Serial.print("Connecting ...");
     WiFi.begin(ssid, password);
    while (WiFi.status() != WL_CONNECTED) {
     delay(500);

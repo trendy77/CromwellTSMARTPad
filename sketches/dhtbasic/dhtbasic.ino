@@ -1,4 +1,4 @@
-#include <dht2pin.h>
+#include <"DHT.h">
 
 #include <ESP8266WiFi.h>
 
@@ -17,7 +17,7 @@ int checks = 0;
 
 // TEMP AND HUMIDITY VARS
 int value, temp, humid = 0;
-dht DHT;
+DHT dht(DHTPin, DHTTYPE);
 #define DHT11_PIN 2
 char temperatureString[6];
 char humidString[6];
