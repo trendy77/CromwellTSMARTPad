@@ -123,7 +123,7 @@ bool getPirValue()
 	pirValue = digitalRead(pirPin);
 	if (pirValue)
 	{
-		kitchMotion = true;
+		
 		Serial.println("T==> Motion detected");
 	}
 }
@@ -131,10 +131,9 @@ bool getPirValue()
 
 void loop() {
 
-	haveMotion = getPirValue();
 	delay(10);
 
-	if (haveMotion) {
+	if (!getPirValue) {
 		turnLightOn();
 	}
 

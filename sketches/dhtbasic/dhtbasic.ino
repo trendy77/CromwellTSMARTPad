@@ -1,5 +1,7 @@
+#include <dht2pin.h>
+
 #include <ESP8266WiFi.h>
-#include <dht.h>
+
 #include <PubSubClient.h>
 #define SLEEP_DELAY_IN_SECONDS  30
 #include <IRrecv.h>
@@ -7,13 +9,6 @@
 #include <IRsend.h>
 #include <IRtimer.h>
 #include <IRutils.h>
-#include <ir_Argo.h>
-#include <ir_Daikin.h>
-#include <ir_Fujitsu.h>
-#include <ir_Kelvinator.h>
-#include <ir_LG.h>
-#include <ir_Mitsubishi.h>
-#include <ir_Trotec.h>
 
 // TIME, INTERNAL VARS
 long lastChk, lastPrint, timeGone = 0;
@@ -42,8 +37,8 @@ decode_results results;
 const char* mqtt_server = "m12.cloudmqtt.com";
 const char* mqtt_username = "node189";
 const char* mqtt_password = "Joker999";
-const char* mqtt_topic = "sensors/lounge_temp";
-const char* mqtt_topic2 = "sensors/lounge_humid";
+const char* mqtt_topic = "lounge_temp";
+const char* mqtt_topic2 = "lounge_humid";
 
 void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
