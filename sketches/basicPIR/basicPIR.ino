@@ -1,9 +1,8 @@
 #define pirPin D1
 unsigned long stars=0;
 unsigned long down=0;
-    // Place to store read PIR Value
-int pirState = 0; // we start, assuming no motion detected
-int pirVal = LOW;        // variable for reading the pin status
+int pirState = 0;   
+int pirVal = LOW;
 int lightNo = 1;
 
 void setup() {

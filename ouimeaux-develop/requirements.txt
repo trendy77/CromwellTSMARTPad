@@ -1,0 +1,5 @@
+gevent == 1.1b4
+requests >= 2.3.0
+pyyaml
+six
+future
