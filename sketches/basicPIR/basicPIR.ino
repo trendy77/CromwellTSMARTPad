@@ -1,36 +1,23 @@
-#define pirPin D1
-unsigned long stars=0;
-unsigned long down=0;
-int pirState = 0;   
-int pirVal = LOW;
-int lightNo = 1;
+#define pir1 14
+#define pir2 5
+int pir1prev,pir2prev = 0;   
+
+void readPins(){
+int pir1pin = digitalRead(pir1);
+int pir2pin = digitalRead(pir2);
+ Serial.print("1 is ");Serial.println(pir1Pin);
+ Serial.print("2 is "); Serial.println(pir2Pin);
+    delay(1000);
+}
 
 void setup() {
 Serial.begin(115200);
   Serial.println("COMMENCING TNODE LIGHTSENSOR");
   delay(10);
-pinMode(pirPin, INPUT);
+pinMode(pir1, INPUT_PULLUP);
+pinMode(pir2, INPUT_PULLUP);
 }
 
-void loop() {
- pirVal = digitalRead(pirPin); // read input value
-  if (pirVal == HIGH) {        
-    if (pirState == LOW) {         // we have just turned on
-      Serial.println("*NEW MOVE"); stars=0; stars++;down=0;
-       pirState = HIGH; 
-       } else if (pirState == HIGH){
-      Serial.print("*"); stars++;
-       } 
-  } else if (pirVal == LOW) 
-      { if (pirState == HIGH) 
-          {
-      Serial.println("_END - TURNING OFF LIGHT");
-      pirState = LOW; stars = 0; down =0;down++;  
-    } else if (pirState == LOW)
-    {
-    down++;
-    Serial.print("_"); 
-    }
-      }
-        delay(10);
+void loop(){
+ readPins();
  }
